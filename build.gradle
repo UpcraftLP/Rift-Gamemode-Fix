@@ -138,19 +138,6 @@ jar {
     classifier '' //this is the main jar!
 }
 
-sourceJar {
-    from "LICENSE"
-    manifest.mainAttributes(
-            "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
-            "Implementation-Title": project.name + "-sources",
-            "Implementation-Version": "${project.mod_version}",
-            "Built-On": project.version,
-            "Built-On-Rift": project.rift_version,
-            "Timestamp": buildTimeStamp,
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}:sources"
-    )
-}
-
 task deobfJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.output
     from sourceSets.api.output
@@ -165,37 +152,6 @@ task deobfJar(type: Jar, dependsOn: classes) {
             "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}:deobf"
     )
     classifier 'deobf'
-}
-
-task apiJar(type: Jar) {
-    from sourceSets.api.allJava
-    from "LICENSE"
-    manifest.mainAttributes(
-            "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
-            "Implementation-Title": project.name + "-api",
-            "Implementation-Version": project.version,
-            "Built-On": project.mc_version,
-            "Built-On-Rift": project.rift_version,
-            "Timestamp": buildTimeStamp,
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}:api"
-    )
-    classifier 'api'
-}
-
-// Javadoc jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    from "LICENSE"
-    manifest.mainAttributes(
-            "Built-On-Java": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
-            "Implementation-Title": project.name + "-javadoc",
-            "Implementation-Version": project.version,
-            "Built-On": project.mc_version,
-            "Built-On-Rift": project.rift_version,
-            "Timestamp": buildTimeStamp,
-            "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}:javadoc"
-    )
-    classifier = 'javadoc'
 }
 
 //sign Jar
@@ -225,40 +181,11 @@ task signDeobfJar(type: SignJar, dependsOn: deobfJar) {
     outputFile = deobfJar.archivePath
 }
 
-task signJavadocJar(type: SignJar, dependsOn: javadocJar) {
-    onlyIf {
-        project.hasProperty('sign_keyStore')
-    }
-    keyPass = findProperty('sign_keyPass')
-    keyStore = findProperty('sign_keyStore')
-    storePass = findProperty('sign_storePass')
-    alias = findProperty('sign_alias')
-
-    inputFile = javadocJar.archivePath
-    outputFile = javadocJar.archivePath
-}
-
-task signApiJar(type: SignJar, dependsOn: apiJar) {
-    onlyIf {
-        project.hasProperty('sign_keyStore')
-    }
-    keyPass = findProperty('sign_keyPass')
-    keyStore = findProperty('sign_keyStore')
-    storePass = findProperty('sign_storePass')
-    alias = findProperty('sign_alias')
-
-    inputFile = apiJar.archivePath
-    outputFile = apiJar.archivePath
-}
-
-tasks.build.dependsOn signJar, signDeobfJar, signJavadocJar, signApiJar
-tasks.curseforge.mustRunAfter signJar, signDeobfJar, signJavadocJar, signApiJar
+tasks.build.dependsOn signJar, signDeobfJar
+tasks.curseforge.mustRunAfter signJar, signDeobfJar
 tasks.curseforge.dependsOn build
 
 artifacts {
-    archives apiJar
-    archives sourceJar
-    archives javadocJar
     archives deobfJar
 }
 
@@ -279,9 +206,6 @@ curseforge {
 
             relations curseRelations
 
-            addArtifact apiJar
-            addArtifact sourceJar
-            addArtifact javadocJar
             addArtifact deobfJar
 
             addGameVersion '1.13'
