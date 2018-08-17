@@ -1,0 +1,10 @@
+{
+    "id": "gm_fix",
+    "name": "Gamemode Fix",
+    "authors": [
+        "UpcraftLP"
+    ],
+    "listeners": [
+        "com.github.upcraftlp.gmfix.GamemodeFix"
+    ]
+}
