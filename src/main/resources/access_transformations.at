@@ -1,1 +1,1 @@
-public method qq a (Lcom/mojang/brigadier/context/CommandContext;Ljava/util/Collection;Laxp;)I # net.minecraft.command.impl.GameModeCommand/func_198484_a
+public method qr a (Lcom/mojang/brigadier/context/CommandContext;Ljava/util/Collection;Laxv;)I # net.minecraft.command.impl.GameModeCommand/func_198484_a
